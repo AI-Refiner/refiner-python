@@ -4,12 +4,12 @@ import json
 import yaml
 import torch
 import torchvision.transforms as transforms
-import torchvision.models as models
+from torchvision import models
 from PIL import Image
 from bs4 import BeautifulSoup
 
 nlp = spacy.load("en_core_web_sm")
-model = models.resnet18(pretrained=True)
+model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
 model.eval()
 
 @click.group()
@@ -17,51 +17,155 @@ def cli():
     pass
 
 @cli.command()
-@click.option('--text', required=False)
-def text_to_embeddings(text):
+@click.option('--string', required=True)
+@click.option('--output-file', required=False)
+def string_to_embeddings(string, output_file=None):
     """
     text string
     """
-    print(text)
-    doc = nlp(text)
+    print("Converting string to embeddings...")
+    doc = nlp(string)
     embeddings = doc.vector
-    print(embeddings)
+
+    if output_file:
+        with open(output_file, 'w') as f:
+            f.write(str(embeddings))
+    else:
+        print(embeddings)
+
+# create a command to parse a text file
+# and return the embeddings
+@cli.command()
+@click.option('--input-file', required=True)
+@click.option('--output-file', required=False)
+def text_to_embeddings(input_file, output_file=None):
+    """
+    path to text file
+    """
+    print("Converting text file to embeddings...")
+    print("Creating embeddings...""")
+    if output_file:
+        print("Saving embeddings to {}".format(output_file))    
+    with open(input_file, 'r') as i:
+        text = i.read()
+        doc = nlp(text)
+        embeddings = doc.vector
+
+    if output_file:
+        with open(output_file, 'w') as o:
+            o.write(str(embeddings))
+    else:
+        print(embeddings)
+
+# create a command to convert csv file to embeddings
+@cli.command()
+@click.option('--input-file', required=True)
+@click.option('--output-file', required=False)
+@click.option('--rows', required=False)
+def csv_to_embeddings(input_file, output_file=None, rows=None):
+    """
+    path to csv file
+    """
+    print("Converting csv file to embeddings...")
+    print("Creatings embeddings for the first {} rows".format(rows or '10'))
+    if output_file:
+        print("Saving embeddings to {}".format(output_file))
+
+    # read first 10 rows of csv file in chunks and convert to embeddings
+    # code: 
+    with open(input_file, 'r') as i:
+        for _ in range(int(rows) or 10):
+            chunk = i.readline()
+            doc = nlp(chunk)
+            embeddings = doc.vector
+
+            if output_file:
+                with open(output_file, 'w') as o:
+                    o.writelines(str(embeddings))
+            else:
+                print(embeddings)
+
+
 
 @cli.command()
-@click.argument('html_file')
-def html_to_embeddings(html_file):
-    with open(html_file, 'r') as f:
-        soup = BeautifulSoup(f, 'html.parser')
+@click.option('--input-file', required=True)
+@click.option('--output-file', required=False)
+def html_to_embeddings(input_file, output_file=None):
+    """
+    path to html file
+    """    
+    print("Converting html file to embeddings...")
+    print("Creating embeddings...""")
+    if output_file:
+        print("Saving embeddings to {}".format(output_file))    
+    with open(input_file, 'r') as i:
+        soup = BeautifulSoup(i, 'html.parser')
         text = soup.get_text()
         doc = nlp(text)
         embeddings = doc.vector
+
+    if output_file:
+        with open(output_file, 'w') as o:
+            o.write(str(embeddings))
+    else:
         print(embeddings)
 
 @cli.command()
-@click.argument('json_file')
-def json_to_embeddings(json_file):
-    with open(json_file, 'r') as f:
-        data = json.load(f)
+@click.option('--input-file', required=True)
+@click.option('--output-file', required=False)
+def json_to_embeddings(input_file, output_file=None):
+    """
+    path to json file
+    """    
+    print("Converting json file to embeddings...")
+    print("Creating embeddings...""")
+    if output_file:
+        print("Saving embeddings to {}".format(output_file))    
+    with open(input_file, 'r') as i:
+        data = json.load(i)
         text = json.dumps(data)
         doc = nlp(text)
         embeddings = doc.vector
+
+    if output_file:
+        with open(output_file, 'w') as o:
+            o.write(str(embeddings))
+    else:
         print(embeddings)
 
 @cli.command()
-@click.argument('yaml_file')
-def yaml_to_embeddings(yaml_file):
-    with open(yaml_file, 'r') as f:
-        data = yaml.safe_load(f)
+@click.option('--input-file', required=True)
+@click.option('--output-file', required=False)
+def yaml_to_embeddings(input_file, output_file=None):
+    """
+    path to yaml file
+    """
+    print("Converting yaml file to embeddings...")
+    print("Creating embeddings...""")
+    if output_file:
+        print("Saving embeddings to {}".format(output_file))        
+    with open(input_file, 'r') as i:
+        data = yaml.safe_load(i)
         text = yaml.dump(data)
         doc = nlp(text)
         embeddings = doc.vector
+
+    if output_file:
+        with open(output_file, 'w') as o:
+            o.write(str(embeddings))
+    else:
         print(embeddings)
 
 @cli.command()
-@click.argument('image_file')
-def image_to_embeddings(image_file):
-    """'path to image file"""
-    image = Image.open(image_file)
+@click.option('--input-file', required=True)
+@click.option('--output-file', required=False)
+def image_to_embeddings(input_file, output_file=None):
+    """path to image file"""
+    print("Converting image file to embeddings...")
+    print("Creating embeddings...""")
+    if output_file:
+        print("Saving embeddings to {}".format(output_file))      
+    image = Image.open(input_file)
     preprocess = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -78,7 +182,12 @@ def image_to_embeddings(image_file):
         output = model(input_batch)
 
     embeddings = output[0].numpy()
-    print(embeddings)
+
+    if output_file:
+        with open(output_file, 'w') as o:
+            o.write(str(embeddings))
+    else:
+        print(embeddings)
 
 if __name__ == '__main__':
     cli()
