@@ -13,24 +13,16 @@ nlp = spacy.load("en_core_web_sm")
 model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
 model.eval()
 
+##$
+#$ CLI ommand group
+###
 @click.group()
 def cli():
     pass
 
-
-@cli.command()
-@click.option('--input-file', '-i', required=True)
-@click.option('--output-file', '-o', required=True)
-def json_to_csv(input_file, output_file):
-    """Converts a JSON file to CSV"""
-    print("Converting JSON to CSV...")
-    with open(input_file, 'r') as f:
-        data = json.load(f)
-        df = pd.DataFrame.from_dict(data, orient='index')
-        df.to_csv(output_file, index_label='Id')
-        click.echo('CSV file saved at {}'.format(output_file))
-
-    
+###
+## Embedding Commands
+###
 @cli.command()
 @click.option('--string', required=True)
 @click.option('--output-file', required=False)
@@ -204,5 +196,24 @@ def image_to_embeddings(input_file, output_file=None):
     else:
         print(embeddings)
 
+###
+## File conversion commands
+###
+@cli.command()
+@click.option('--input-file', '-i', required=True)
+@click.option('--output-file', '-o', required=True)
+def json_to_csv(input_file, output_file):
+    """Converts a JSON file to CSV"""
+    print("Converting JSON to CSV...")
+    with open(input_file, 'r') as f:
+        data = json.load(f)
+        df = pd.DataFrame.from_dict(data, orient='index')
+        df.to_csv(output_file, index_label='Id')
+        click.echo('CSV file saved at {}'.format(output_file))
+
+
+###
+## Main function
+###
 if __name__ == '__main__':
     cli()
