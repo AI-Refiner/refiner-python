@@ -12,6 +12,7 @@ This will install the required libraries, including spacy, torch, torchvision, b
 
 ## Help
 To  see the available sub-commands run the help option.
+
 ` python cli.py  --help`
 
 ## Usage
