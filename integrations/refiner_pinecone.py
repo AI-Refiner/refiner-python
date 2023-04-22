@@ -17,12 +17,10 @@ class PineconeClient(object):
 
         # Create or retrieve Pinecone index
         if name in pinecone.list_indexes():
-            pinecone.delete_index(name)
-        pinecone.create_index(name, dimension=96) # change dimension to len(embeddings[0][1]). will require loop if embeddings is a list of tuples > 1
+            print("Error: Index already exists.")
+        else:
+            pinecone.create_index(name, dimension=96) # change dimension to len(embeddings[0][1]). will require loop if embeddings is a list of tuples > 1
 
         # Add embeddings to Pinecone index
         pinecone_index = pinecone.Index(name)
         pinecone_index.upsert(vectors=embeddings, namespace="example-namespace")
-
-        # Disconnect from Pinecone
-        pinecone.deinit()
