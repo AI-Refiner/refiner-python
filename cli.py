@@ -17,7 +17,7 @@ def cli():
     pass
 
 @cli.command()
-@click.argument('text')
+@click.option('--text', '-t', type=str, required=False, help='text string')
 @click.help_option('--help', '-h')
 def text_to_embeddings(text):
     """
