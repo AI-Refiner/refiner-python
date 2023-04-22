@@ -10,6 +10,10 @@ To use the Embeddings CLI, you'll need to install the necessary dependencies. Yo
 
 This will install the required libraries, including spacy, torch, torchvision, beautifulsoup4, json, and yaml.
 
+## Help
+To  see the available sub-commands run the help option.
+` python cli.py  --help`
+
 ## Usage
 Once you have installed the dependencies, you can use the Embeddings CLI to convert your data to embeddings. Here are the available sub-commands:
 
