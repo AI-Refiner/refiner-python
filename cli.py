@@ -17,12 +17,13 @@ def cli():
     pass
 
 @cli.command()
-@click.option('--text', '-t', type=str, required=False)
+@click.option('--text', required=False)
 @click.help_option('--help', '-h')
 def text_to_embeddings(text):
     """
     text string
     """
+    print(text)
     doc = nlp(text)
     embeddings = doc.vector
     print(embeddings)
