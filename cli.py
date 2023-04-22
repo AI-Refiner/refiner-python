@@ -3,6 +3,7 @@ import spacy
 import json
 import yaml
 import torch
+import pandas as pd
 import torchvision.transforms as transforms
 from torchvision import models
 from PIL import Image
@@ -15,6 +16,21 @@ model.eval()
 @click.group()
 def cli():
     pass
+
+
+@cli.command()
+@click.option('--input-file', '-i', required=True)
+@click.option('--output-file', '-o', required=True)
+def json_to_csv(input_file, output_file):
+    """Converts a JSON file to CSV"""
+    print("Converting JSON to CSV...")
+    with open(input_file, 'r') as f:
+        data = json.load(f)
+        df = pd.DataFrame.from_dict(data, orient='index')
+        df.to_csv(output_file, index_label='Id')
+        click.echo('CSV file saved at {}'.format(output_file))
+
+    
 
 @cli.command()
 @click.option('--string', required=True)

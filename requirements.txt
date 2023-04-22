@@ -4,5 +4,6 @@ torch
 torchvision
 beautifulsoup4
 json5
+pandas
 pyyaml
 Pillow
