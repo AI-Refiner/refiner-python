@@ -17,6 +17,7 @@ This will install the required libraries, including spacy, torch, torchvision, b
 Create a .env file in the root folder. Add your Pinecone API Key and environment name
 
 PINECONE_API_KEY="EXAMPLE_API_KEY"
+
 PINECONE_ENVIRONMENT_NAME="EXAMPLE_ENV_NAME"
 
 ## Help
