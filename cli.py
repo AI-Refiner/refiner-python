@@ -8,8 +8,7 @@ import torchvision.models as models
 from PIL import Image
 from bs4 import BeautifulSoup
 
-import en_core_web_sm
-nlp = en_core_web_sm.load()
+nlp = spacy.load("en_core_web_sm")
 model = models.resnet18(pretrained=True)
 model.eval()
 
