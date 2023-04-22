@@ -1,7 +1,7 @@
 # AI-Refiner
 
 ## Using the Embeddings CLI
-The Embeddings CLI is a command-line interface that allows you to convert text, HTML, JSON, and YAML data to embeddings, as well as convert an image file to embeddings. In this guide, we'll walk through how to use the CLI to perform these tasks.
+The Embeddings CLI is a command-line interface that allows you to convert text, images, audio, HTML, JSON, and YAML data to embeddings. Embeddings can be used to create visualization tools, model training and tuning tools and benchmarking and evaluation tools.
 
 ## Installation
 To use the Embeddings CLI, you'll need to install the necessary dependencies. You can do this by running the following command:
