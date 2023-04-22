@@ -17,14 +17,14 @@ def cli():
     pass
 
 @cli.command()
-@click.argument('text')
+@click.argument('text', help='text string')
 def text_to_embeddings(text):
     doc = nlp(text)
     embeddings = doc.vector
     print(embeddings)
 
 @cli.command()
-@click.argument('html_file')
+@click.argument('html_file', help='path to HTML file')
 def html_to_embeddings(html_file):
     with open(html_file, 'r') as f:
         soup = BeautifulSoup(f, 'html.parser')
@@ -34,7 +34,7 @@ def html_to_embeddings(html_file):
         print(embeddings)
 
 @cli.command()
-@click.argument('json_file')
+@click.argument('json_file', help='path to JSON file')
 def json_to_embeddings(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
@@ -44,7 +44,7 @@ def json_to_embeddings(json_file):
         print(embeddings)
 
 @cli.command()
-@click.argument('yaml_file')
+@click.argument('yaml_file', help='path to YAML file')
 def yaml_to_embeddings(yaml_file):
     with open(yaml_file, 'r') as f:
         data = yaml.safe_load(f)
@@ -54,7 +54,7 @@ def yaml_to_embeddings(yaml_file):
         print(embeddings)
 
 @cli.command()
-@click.argument('image_file')
+@click.argument('image_file', help='path to image file')
 def image_to_embeddings(image_file):
     image = Image.open(image_file)
     preprocess = transforms.Compose([
