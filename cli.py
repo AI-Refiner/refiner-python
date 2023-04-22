@@ -17,8 +17,8 @@ def cli():
     pass
 
 @cli.command()
-@click.argument('text', help='text string')
-def text_to_embeddings(text):
+def text(text):
+    """text string"""
     doc = nlp(text)
     embeddings = doc.vector
     print(embeddings)
