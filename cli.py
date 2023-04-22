@@ -31,7 +31,6 @@ def json_to_csv(input_file, output_file):
         click.echo('CSV file saved at {}'.format(output_file))
 
     
-
 @cli.command()
 @click.option('--string', required=True)
 @click.option('--output-file', required=False)
