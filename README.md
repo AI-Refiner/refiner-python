@@ -16,35 +16,35 @@ Once you have installed the dependencies, you can use the Embeddings CLI to conv
 ## text_to_embeddings
 This sub-command takes a text file as input and prints the corresponding embeddings. To use this sub-command, run the following command:
 
-`python embeddings.py text_to_embeddings path/to/text/file.txt`
+`python cli.py text_to_embeddings path/to/text/file.txt`
 
 Replace path/to/text/file.txt with the path to your text file.
 
 ## html_to_embeddings
 This sub-command takes an HTML file as input and prints the corresponding embeddings. To use this sub-command, run the following command:
 
-`python embeddings.py html_to_embeddings path/to/html/file.html`
+`python cli.py html_to_embeddings path/to/html/file.html`
 
 Replace path/to/html/file.html with the path to your HTML file.
 
 ## json_to_embeddings
 This sub-command takes a JSON file as input and prints the corresponding embeddings. To use this sub-command, run the following command:
 
-`python embeddings.py json_to_embeddings path/to/json/file.json`
+`python cli.py json_to_embeddings path/to/json/file.json`
 
 Replace path/to/json/file.json with the path to your JSON file.
 
 ## yaml_to_embeddings
 This sub-command takes a YAML file as input and prints the corresponding embeddings. To use this sub-command, run the following command:
 
-`python embeddings.py yaml_to_embeddings path/to/yaml/file.yaml`
+`python cli.py yaml_to_embeddings path/to/yaml/file.yaml`
 
 Replace path/to/yaml/file.yaml with the path to your YAML file.
 
 ## image_to_embeddings
 This sub-command takes an image file as input and prints the corresponding embeddings. To use this sub-command, run the following command:
 
-`python embeddings.py image_to_embeddings path/to/image/file.jpg`
+`python cli.py image_to_embeddings path/to/image/file.jpg`
 
 Replace path/to/image/file.jpg with the path to your image file.
 
