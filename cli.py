@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import click
 import spacy
 import json
@@ -9,16 +11,31 @@ from torchvision import models
 from PIL import Image
 from bs4 import BeautifulSoup
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+from integrations.refiner_pinecone import PineconeClient
+
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_ENVIRONMENT_NAME = os.getenv("PINECONE_ENVIRONMENT_NAME")
+
 nlp = spacy.load("en_core_web_sm")
 model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
 model.eval()
 
-##$
-#$ CLI ommand group
+# TODO: add support for OpenAI. use config file to store API keys
+# TODO: move all of the logic into a modules folder or REST API
+# TODO: integrations folder with spacy and openAI integrations
+# TODO: add a config file to store user settings
+# TODO: add storage options for embeddings. BYOS (bring your own storage).
+
+###
+## CLI command group
 ###
 @click.group()
 def cli():
-    pass
+    """A CLI wrapper for the AI-Refiner API."""
 
 ###
 ## Embedding Commands
@@ -210,6 +227,32 @@ def json_to_csv(input_file, output_file):
         df = pd.DataFrame.from_dict(data, orient='index')
         df.to_csv(output_file, index_label='Id')
         click.echo('CSV file saved at {}'.format(output_file))
+
+
+
+###
+## Integration commands
+###
+# write embeddings to pinecone
+@cli.command()
+@click.option('--input-file', required=True)
+def write_to_pinecone(input_file):
+    """
+    path to embeddings file
+    """
+    print("Writing embeddings to Pinecone...")
+    with open(input_file, 'r') as i:
+        string = i.read()
+        pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
+        doc = nlp(string)
+        embeddings = doc.vector
+        obj = [ ( 'vec1', embeddings.tolist() ) ] # TODO: make this dynamic
+        pinecone_client.store_embeddings(obj, 'ai-refiner-index')
+        click.echo('Embeddings written to Pinecone')
+
+
+
+
 
 
 ###

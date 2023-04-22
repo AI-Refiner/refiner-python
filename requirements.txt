@@ -7,3 +7,5 @@ json5
 pandas
 pyyaml
 Pillow
+pinecone-client
+python-dotenv
