@@ -56,6 +56,7 @@ def yaml_to_embeddings(yaml_file):
 @cli.command()
 @click.argument('image_file', help='path to image file')
 def image_to_embeddings(image_file):
+    """'path to image file"""
     image = Image.open(image_file)
     preprocess = transforms.Compose([
         transforms.Resize(256),
