@@ -7,8 +7,6 @@ class PineconeClient(object):
 
     def __init__(self, api_key, environment_name):
         # Connect to Pinecone
-        print(api_key)
-        print(environment_name)
         pinecone.init(api_key=api_key, environment=environment_name)
 
 
