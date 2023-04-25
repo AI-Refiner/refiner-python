@@ -81,8 +81,8 @@ This sub-command takes a json file as input and converts it to csv. To use this 
 `python cli.py json_to_csv --input-file /path/to/input.json --output-file /path/to/output.csv`
 
 
-## write_to_pinecode 
+## write_to_pinecone 
 
-`python cli.py yaml_to_embeddings --input-file /path/to/input.yaml --output-file /path/to/output.txt`
+`python cli.py write-to-pinecone --input-file /path/to/input.yaml --vector-id vec01 --namespace example-namespace
 
-This sub-command takes a csv or json file as input and writes embeddings to a pinecoce vector database.
+This sub-command takes a csv or json file as input and writes embeddings to a pinecone vector database.
