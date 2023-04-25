@@ -10,6 +10,8 @@ import torchvision.transforms as transforms
 from torchvision import models
 from PIL import Image
 from bs4 import BeautifulSoup
+import ast
+import re
 
 import os
 from dotenv import load_dotenv
@@ -236,17 +238,20 @@ def json_to_csv(input_file, output_file):
 # write embeddings to pinecone
 @cli.command()
 @click.option('--input-file', required=True)
-def write_to_pinecone(input_file):
+@click.option('--vector-id', required=True)
+@click.option('--namespace', required=False)
+def write_to_pinecone(input_file, vector_id , namespace):
     """
     path to embeddings file
     """
     print("Writing embeddings to Pinecone...")
     with open(input_file, 'r') as i:
+        # if text file, read as string use ast to convert to list
         string = i.read()
-        pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
+        pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME, namespace=namespace)
         doc = nlp(string)
-        embeddings = doc.vector
-        obj = [ ( 'vec1', embeddings.tolist() ) ] # TODO: make this dynamic
+        embeddings = doc.vector   
+        obj = [ ( vector_id, embeddings.tolist() ) ] # TODO: make this dynamic       
         pinecone_client.store_embeddings(obj, 'ai-refiner-index')
         click.echo('Embeddings written to Pinecone')
 
