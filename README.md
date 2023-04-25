@@ -4,6 +4,8 @@
 
 The Embeddings CLI is a command-line interface that allows you to convert text, images, audio, HTML, JSON, and YAML data to embeddings. Embeddings can be used to create visualization tools, model training and tuning tools and benchmarking and evaluation tools.
 
+You can export embeddings to to .txt files using the `--output-file` option or you can write to a Pinecone index using the `write-to-pinecone` command.
+
 ## Installation
 
 To use the Embeddings CLI, you'll need to install the necessary dependencies. You can do this by running the following command:
@@ -12,7 +14,7 @@ To use the Embeddings CLI, you'll need to install the necessary dependencies. Yo
 
 This will install the required libraries, including spacy, torch, torchvision, beautifulsoup4, json, and yaml.
 
-# ENV
+## ENV
 
 Create a .env file in the root folder. Add your Pinecone API Key and environment name
 
@@ -78,6 +80,9 @@ This sub-command takes a json file as input and converts it to csv. To use this 
 
 `python cli.py json_to_csv --input-file /path/to/input.json --output-file /path/to/output.csv`
 
-## Conclusion
 
-The Embeddings CLI is a useful tool for converting text, HTML, JSON, and YAML data to embeddings, as well as converting images to embeddings. With this guide, you should now be able to use the CLI to perform these tasks on your own data.
+## write_to_pinecone 
+
+`python cli.py write-to-pinecone --input-file /path/to/input.yaml --vector-id vec01 --namespace example-namespace
+
+This sub-command takes a csv or json file as input and writes embeddings to a pinecone vector database.
