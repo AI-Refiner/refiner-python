@@ -21,8 +21,5 @@ class PineconeClient(object):
 
         # Add embeddings to Pinecone index
         pinecone_index = pinecone.Index(name)
-<<<<<<< HEAD
         pinecone_index.upsert(vectors=embeddings, namespace=self.namespace)
-=======
-        pinecone_index.upsert(vectors=embeddings, namespace="example-namespace")
->>>>>>> c2e3aa3c481434f2b54a588f9ceddd9cd1d0f556
+

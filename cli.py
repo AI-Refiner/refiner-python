@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import click
-import spacy
 import json
 import yaml
 import torch
@@ -10,19 +9,18 @@ import torchvision.transforms as transforms
 from torchvision import models
 from PIL import Image
 from bs4 import BeautifulSoup
-import ast
-import re
 
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
 from integrations.refiner_pinecone import PineconeClient
+from integrations.refiner_spacy import SpacyClient
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_ENVIRONMENT_NAME = os.getenv("PINECONE_ENVIRONMENT_NAME")
 
-nlp = spacy.load("en_core_web_sm")
+
 model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
 model.eval()
 
@@ -50,8 +48,9 @@ def string_to_embeddings(string, output_file=None):
     text string
     """
     print("Converting string to embeddings...")
-    doc = nlp(string)
-    embeddings = doc.vector
+    
+    spacy_client = SpacyClient()
+    embeddings = spacy_client.generate_embeddings([string])
 
     if output_file:
         with open(output_file, 'w') as f:
@@ -74,8 +73,8 @@ def text_to_embeddings(input_file, output_file=None):
         print("Saving embeddings to {}".format(output_file))    
     with open(input_file, 'r') as i:
         text = i.read()
-        doc = nlp(text)
-        embeddings = doc.vector
+        spacy_client = SpacyClient()
+        embeddings = spacy_client.generate_embeddings([text])
 
     if output_file:
         with open(output_file, 'w') as o:
@@ -99,17 +98,20 @@ def csv_to_embeddings(input_file, output_file=None, rows=None):
 
     # read first 10 rows of csv file in chunks and convert to embeddings
     # code: 
+    chunks = []
     with open(input_file, 'r') as i:
         for _ in range(int(rows) or 10):
             chunk = i.readline()
-            doc = nlp(chunk)
-            embeddings = doc.vector
+            chunks.append(chunk)
 
-            if output_file:
-                with open(output_file, 'w') as o:
-                    o.writelines(str(embeddings))
-            else:
-                print(embeddings)
+        spacy_client = SpacyClient()
+        embeddings = spacy_client.generate_embeddings(chunks)
+
+        if output_file:
+            with open(output_file, 'w') as o:
+                o.writelines(str(embeddings))
+        else:
+            print(embeddings)
 
 
 
@@ -127,8 +129,8 @@ def html_to_embeddings(input_file, output_file=None):
     with open(input_file, 'r') as i:
         soup = BeautifulSoup(i, 'html.parser')
         text = soup.get_text()
-        doc = nlp(text)
-        embeddings = doc.vector
+        spacy_client = SpacyClient()
+        embeddings = spacy_client.generate_embeddings([text])
 
     if output_file:
         with open(output_file, 'w') as o:
@@ -150,8 +152,8 @@ def json_to_embeddings(input_file, output_file=None):
     with open(input_file, 'r') as i:
         data = json.load(i)
         text = json.dumps(data)
-        doc = nlp(text)
-        embeddings = doc.vector
+        spacy_client = SpacyClient()
+        embeddings = spacy_client.generate_embeddings([text])
 
     if output_file:
         with open(output_file, 'w') as o:
@@ -173,8 +175,8 @@ def yaml_to_embeddings(input_file, output_file=None):
     with open(input_file, 'r') as i:
         data = yaml.safe_load(i)
         text = yaml.dump(data)
-        doc = nlp(text)
-        embeddings = doc.vector
+        spacy_client = SpacyClient()
+        embeddings = spacy_client.generate_embeddings([text])
 
     if output_file:
         with open(output_file, 'w') as o:
@@ -241,7 +243,7 @@ def json_to_csv(input_file, output_file):
 @click.option('--input-file', required=True)
 @click.option('--vector-id', required=True)
 @click.option('--namespace', required=False)
-def write_to_pinecone(input_file, vector_id , namespace):
+def write_to_pinecone(input_file, vector_id, namespace):
     """
     path to embeddings file
     """
@@ -249,9 +251,9 @@ def write_to_pinecone(input_file, vector_id , namespace):
     with open(input_file, 'r') as i:
         string = i.read()
         pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME, namespace=namespace)
-        doc = nlp(string)
-        embeddings = doc.vector   
-        obj = [ ( vector_id, embeddings.tolist() ) ]   
+        spacy_client = SpacyClient()
+        embeddings = spacy_client.generate_embeddings([string])
+        obj = [ ( vector_id, embeddings ) ]   
         pinecone_client.store_embeddings(obj, 'ai-refiner-index')
         click.echo('Embeddings written to Pinecone')
 
