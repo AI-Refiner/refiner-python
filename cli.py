@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import click
+import csv
 import json
 import yaml
 import torch
@@ -16,10 +17,12 @@ load_dotenv()
 
 from integrations.refiner_pinecone import PineconeClient
 from integrations.refiner_spacy import SpacyClient
+from integrations.refiner_openai import OpenAIClient
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_ENVIRONMENT_NAME = os.getenv("PINECONE_ENVIRONMENT_NAME")
-
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_ADA_200_DEFAULT_DIMENSION = 1536
 
 model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
 model.eval()
@@ -241,21 +244,51 @@ def json_to_csv(input_file, output_file):
 # Write embeddings to Pinecone database
 @cli.command()
 @click.option('--input-file', required=True)
+@click.option('--index-name', required=True)
 @click.option('--vector-id', required=True)
 @click.option('--namespace', required=False)
-def write_to_pinecone(input_file, vector_id, namespace):
+def write_to_pinecone(input_file, index_name, vector_id, namespace):
     """
     path to embeddings file
     """
     print("Writing embeddings to Pinecone...")
-    with open(input_file, 'r') as i:
-        string = i.read()
-        pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME, namespace=namespace)
-        spacy_client = SpacyClient()
-        embeddings = spacy_client.generate_embeddings([string])
-        obj = [ ( vector_id, embeddings ) ]   
-        pinecone_client.store_embeddings(obj, 'ai-refiner-index')
-        click.echo('Embeddings written to Pinecone')
+    vectors = []
+    # spacy_client = SpacyClient()
+    openai_client = OpenAIClient(OPENAI_API_KEY)
+
+    #TODO: check the file type and parse accordingly. or create a new command for each file type
+        
+    df = pd.read_csv(input_file)
+    for idx, row in df.iterrows():
+        if idx > 10:
+            break          
+        chunk = row['Text']
+        embeddings = openai_client.create_embedding(chunk)
+        vector = (str(row['Id']), embeddings, {"review_text": row['Text']})
+        vectors.append(vector)
+    
+    pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
+    pinecone_client.store_embeddings(vectors, index_name, dimension=OPENAI_ADA_200_DEFAULT_DIMENSION, namespace=namespace)
+    click.echo('Embeddings written to Pinecone')
+
+
+
+# search_pinecone and get answer from Pinecone database
+@cli.command()
+@click.option('--question', required=True)
+@click.option('--index-name', required=True)
+@click.option('--namespace', required=False)
+def search_pinecone(question, index_name, namespace):
+    """
+    path to embeddings file
+    """
+    print("Searching Pinecone...")
+
+    pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
+    openai_client = OpenAIClient(OPENAI_API_KEY)
+    embeddings = openai_client.create_embedding(question)
+    results = pinecone_client.search_pinecone(embeddings, index_name, namespace=namespace)
+    click.echo('Results: {}'.format(results))
 
 
 ###
