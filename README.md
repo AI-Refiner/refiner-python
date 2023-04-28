@@ -4,7 +4,9 @@
 
 The Embeddings CLI is a command-line interface that allows you to convert text, images, audio, HTML, JSON, CSV, and YAML data to embeddings. Embeddings can be used to create visualization tools, model training and tuning tools, text search, Q/A and recommendation APIs. 
 
-You can export embeddings to to .txt files using the `--output-file` option or you can write to a Pinecone index using the `write-to-pinecone` command.
+You can export embeddings to to .txt files using the `--output-file` option
+
+You can write to a Pinecone index using the[`write-to-pinecone`](https://github.com/adaro/AI-Refiner/blob/main/README.md#write_to_pinecone) command.
 
 ## Installation
 
