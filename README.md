@@ -2,7 +2,7 @@
 
 ## Using the Embeddings CLI
 
-The Embeddings CLI is a command-line interface that allows you to convert text, images, audio, HTML, JSON, and YAML data to embeddings. Embeddings can be used to create visualization tools, model training and tuning tools and benchmarking and evaluation tools.
+The Embeddings CLI is a command-line interface that allows you to convert text, images, audio, HTML, JSON, CSV, and YAML data to embeddings. Embeddings can be used to create visualization tools, model training and tuning tools and benchmarking and evaluation tools.
 
 You can export embeddings to to .txt files using the `--output-file` option or you can write to a Pinecone index using the `write-to-pinecone` command.
 
