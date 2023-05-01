@@ -29,7 +29,7 @@ class PineconeClient(object):
 
 
 
-    def search_pinecone(self, embeddings, index_name, limit=1, namespace=None):
+    def search_pinecone(self, embeddings, index_name, limit, namespace=None):
 
         # Connect to the Pinecone index
         index = pinecone.Index(index_name)

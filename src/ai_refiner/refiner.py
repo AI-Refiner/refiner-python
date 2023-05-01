@@ -14,7 +14,6 @@ class Refiner:
     def __init__(self):
         pass
 
-
     def __validate_payload(self, payload):
         """
         Validate the payload for the create method.
@@ -28,8 +27,6 @@ class Refiner:
         if not payload['metadata']['text']:
             raise Exception("Payload metadata must have text.")
         return True
-    
-
 
     def create(self, payload, index_id, namespace=None):
         """
@@ -50,14 +47,14 @@ class Refiner:
         return response
     
 
-    def search(self, query, index_id, limit=1, namespace=None):
+    def search(self, query, index_id, limit, namespace=None):
         """
         Search for Open AI embeddings from text.
         """
         pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
         openai_client = OpenAIClient(OPENAI_API_KEY)
         embeddings = openai_client.create_embeddings(query)
-        results = pinecone_client.search_pinecone(embeddings, index_id, limit=int(limit), namespace=namespace)
+        results = pinecone_client.search_pinecone(embeddings, index_id, limit, namespace=namespace)
         return results
 
 

@@ -42,7 +42,7 @@ def create(text, index_id, vector_id, namespace):
 @cli.command()
 @click.option('--text', required=True)
 @click.option('--index-id', required=True)
-@click.option('--limit', required=False)
+@click.option('--limit', required=False, type=click.INT, default=1)
 @click.option('--namespace', required=False)
 def search(text, index_id, limit, namespace):
     """Search for a text embedding in Refiner"""
@@ -50,7 +50,7 @@ def search(text, index_id, limit, namespace):
     click.echo('Searching Refiner...')
 
     refiner_client = Refiner()
-    results = refiner_client.search(text, index_id, limit=limit, namespace=namespace)
+    results = refiner_client.search(text, index_id, limit, namespace=namespace)
     click.echo('Results: {}'.format(results))
 
 ###
