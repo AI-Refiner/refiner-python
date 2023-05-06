@@ -1,4 +1,5 @@
-import os 
+import os
+import json
 from integrations.refiner_openai import OpenAIClient
 from integrations.refiner_pinecone import PineconeClient
 from dotenv import load_dotenv
@@ -10,7 +11,14 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_ENVIRONMENT_NAME = os.getenv("PINECONE_ENVIRONMENT_NAME")
 OPENAI_ADA_200_DEFAULT_DIMENSION = 1536
 
-class Refiner:
+
+class Embeddings:
+    """
+    Refiner class for creating, searching, updating, and deleting Open AI embeddings.
+    Embeddings are created using OpenAI.
+    Uses Pinecone for storing and searching embeddings.
+    """
+
     def __init__(self):
         pass
 
@@ -18,45 +26,50 @@ class Refiner:
         """
         Validate the payload for the create method.
         """
-        if not payload['id']:
-            raise Exception("Payload must have an id.")
         if not payload['text']:
-            raise Exception("Payload must have text.")
-        if not payload['metadata']:
-            raise Exception("Payload must have metadata.")
-        if not payload['metadata']['text']:
-            raise Exception("Payload metadata must have text.")
-        return True
+            return {"error": "Must include text."}
+        if payload.get('metadata', None):
+            try:
+                json.loads(payload['metadata'])
+            except (json.decoder.JSONDecodeError, ValueError) as e:
+                return {"error": "Metadata must be valid JSON."}
+        return {"success": True}
 
     def create(self, payload, index_id, namespace=None):
         """
         Create Pinecone vectors from Open AI embeddings.
         """
-
-        if not self.__validate_payload(payload):
-            raise Exception("Payload is invalid.")
+        validated_payload = self.__validate_payload(payload)
+        if validated_payload.get('error', None):
+            return validated_payload
 
         openai_client = OpenAIClient(OPENAI_API_KEY)
         embeddings = openai_client.create_embeddings(payload['text'])
 
-        vector = (str(payload['id']), embeddings, payload['metadata']) 
+        metadata = payload.get('metadata', None)
+        if metadata:
+            metadata = json.loads(metadata)
 
-        pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
-        response = pinecone_client.store_embeddings([vector], index_id, dimension=OPENAI_ADA_200_DEFAULT_DIMENSION, namespace=namespace)        
-        
+        vector = (str(payload['id']), embeddings, metadata)
+
+        pinecone_client = PineconeClient(
+            PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
+        response = pinecone_client.store_embeddings(
+            [vector], index_id, dimension=OPENAI_ADA_200_DEFAULT_DIMENSION, namespace=namespace)
+
         return response
-    
 
     def search(self, query, index_id, limit, namespace=None):
         """
         Search for Open AI embeddings from text.
         """
-        pinecone_client = PineconeClient(PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
+        pinecone_client = PineconeClient(
+            PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
         openai_client = OpenAIClient(OPENAI_API_KEY)
         embeddings = openai_client.create_embeddings(query)
-        results = pinecone_client.search_pinecone(embeddings, index_id, limit, namespace=namespace)
+        results = pinecone_client.search_pinecone(
+            embeddings, index_id, limit, namespace=namespace)
         return results
-
 
     def delete(self, id):
         """
@@ -75,4 +88,3 @@ class Refiner:
         Update Open AI embeddings from text.
         """
         pass
-    
