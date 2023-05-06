@@ -1,10 +1,10 @@
 [project]
-name = "ai-refiner"
+name = "ai_refiner"
 version = "0.0.1"
 authors = [
   { name="Alex Daro", email="alexdaro34@gmail.com" },
 ]
-description = "A tool for refining AI models"
+description = "A tool for refining AI datasets"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
