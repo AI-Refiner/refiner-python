@@ -1,18 +1,11 @@
 import os
 import json
-from refiner.integrations import OpenAIClient
-from refiner.integrations import PineconeClient
-
 from pathlib import Path
+
 from dotenv import load_dotenv
 
-dotenv_path = Path('.env')
-load_dotenv(dotenv_path=dotenv_path)
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_ENVIRONMENT_NAME = os.getenv("PINECONE_ENVIRONMENT_NAME")
-OPENAI_ADA_200_DEFAULT_DIMENSION = 1536
+from refiner.integrations import OpenAIClient
+from refiner.integrations import PineconeClient
 
 
 class Embeddings:
@@ -22,22 +15,32 @@ class Embeddings:
     Uses Pinecone for storing and searching embeddings.
     """
 
-    def __init__(self):
+    def __init__(self, config_file=None, openai_api_key=None, pinecone_api_key=None, pinecone_environment_name=None):
         """
         Initialize the Refiner class.
         """
-        pass
+        self.config_file = config_file
+        _dotenv_path = Path(self.config_file or '.env')
+        if _dotenv_path.exists():
+            load_dotenv(dotenv_path=_dotenv_path)
+
+        self.openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
+        self.pinecone_api_key = pinecone_api_key or os.getenv(
+            "PINECONE_API_KEY")
+        self.pinecone_environment_name = pinecone_environment_name or os.getenv(
+            "PINECONE_ENVIRONMENT_NAME")
+        self.openai_ada_200_default_dimension = 1536
 
     def __validate_env(self):
         """
         Validate the environment variables.
         """
-        if not OPENAI_API_KEY:
-            return {"error": "OPENAI_API_KEY environment variable not set."}
-        if not PINECONE_API_KEY:
-            return {"error": "PINECONE_API_KEY environment variable not set."}
-        if not PINECONE_ENVIRONMENT_NAME:
-            return {"error": "PINECONE_ENVIRONMENT_NAME environment variable not set."}
+        if not self.openai_api_key:
+            return {"error": "OPENAI_API_KEY environment variable not set in .env file or passed in as an argument."}
+        if not self.pinecone_api_key:
+            return {"error": "PINECONE_API_KEY environment variable not set in .env file or passed in as an argument."}
+        if not self.pinecone_environment_name:
+            return {"error": "PINECONE_ENVIRONMENT_NAME environment variable not set in .env file or passed in as an argument."}
         return {"success": True}
 
     def __validate_payload(self, payload):
@@ -65,7 +68,7 @@ class Embeddings:
         if validated_payload.get('error', None):
             return validated_payload
 
-        openai_client = OpenAIClient(OPENAI_API_KEY)
+        openai_client = OpenAIClient(self.openai_api_key)
         embeddings = openai_client.create_embeddings(payload['text'])
 
         metadata = payload.get('metadata', None)
@@ -75,9 +78,9 @@ class Embeddings:
         vector = (str(payload['id']), embeddings, metadata)
 
         pinecone_client = PineconeClient(
-            PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
+            self.pinecone_api_key, self.pinecone_environment_name)
         response = pinecone_client.store_embeddings(
-            [vector], index_id, dimension=OPENAI_ADA_200_DEFAULT_DIMENSION, namespace=namespace)
+            [vector], index_id, dimension=self.openai_ada_200_default_dimension, namespace=namespace)
 
         return response
 
@@ -85,9 +88,13 @@ class Embeddings:
         """
         Search for Open AI embeddings from text.
         """
+        validated_env = self.__validate_env()
+        if validated_env.get('error', None):
+            return validated_env
+
         pinecone_client = PineconeClient(
-            PINECONE_API_KEY, PINECONE_ENVIRONMENT_NAME)
-        openai_client = OpenAIClient(OPENAI_API_KEY)
+            self.pinecone_api_key, self.pinecone_environment_name)
+        openai_client = OpenAIClient(self.openai_api_key)
         embeddings = openai_client.create_embeddings(query)
         results = pinecone_client.search_pinecone(
             embeddings, index_id, limit, namespace=namespace)
