@@ -10,7 +10,7 @@ To use the Embeddings CLI, you'll need to clone the repository and install the n
 
 `git clone https://github.com/adaro/AI-Refiner.git`
 
-Create a `.env` file in the root folder. Add your OpenAI API Key, Pinecone API Key and environment name:
+Create a `.env` file either in the root folder or anywhere your python environment has access to when using the `--config-file` option. Add your OpenAI API Key, Pinecone API Key and Pinecone environment name, or pass these in as CLI options or module kwargs.
 
 `PINECONE_API_KEY="API_KEY"`
 
