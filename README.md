@@ -9,7 +9,7 @@ The Embeddings API is a Pinecone wrapper written in Python that allows you to co
 To use the Embeddings CLI, you'll need to clone the repository and install the necessary dependencies.
 `git clone https://github.com/adaro/AI-Refiner.git`
 
-Create a .env file in the root folder. Add your Pinecone API Key and environment name:
+Create a .env file in the root folder. Add your OpenAI API Key, Pinecone API Key and environment name:
 
 `PINECONE_API_KEY="API_KEY"`
 
