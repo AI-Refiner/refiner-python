@@ -10,8 +10,6 @@ To use the Embeddings CLI, you'll need to install the necessary dependencies. Yo
 
 `pip install -r requirements.txt`
 
-This will install the required libraries, including spacy, torch, torchvision, beautifulsoup4, json, and yaml.
-
 ## ENV
 
 Create a .env file in the root folder. Add your Pinecone API Key and environment name
