@@ -24,4 +24,4 @@ Create a .env file in the root folder. Add your Pinecone API Key and environment
 
 To see the available sub-commands run the help option.
 
-` python cli.py  --help`
+`refiner  --help`
