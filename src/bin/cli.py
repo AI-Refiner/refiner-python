@@ -1,15 +1,16 @@
 #!/usr/bin/python
 
+import json
+import time
 import click
 import uuid
 from refiner.embeddings import Embeddings
 
-# TODO: create a fetch, update, and delete commands.
-
-
 ###
 # CLI command group
 ###
+
+
 @click.group()
 def cli():
     """A CLI wrapper for the Refiner API."""

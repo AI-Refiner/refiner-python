@@ -1,10 +1,13 @@
 import os
 import json
-from integrations.refiner_openai import OpenAIClient
-from integrations.refiner_pinecone import PineconeClient
+from refiner.integrations import OpenAIClient
+from refiner.integrations import PineconeClient
+
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+dotenv_path = Path('.env')
+load_dotenv(dotenv_path=dotenv_path)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
