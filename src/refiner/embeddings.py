@@ -23,7 +23,22 @@ class Embeddings:
     """
 
     def __init__(self):
+        """
+        Initialize the Refiner class.
+        """
         pass
+
+    def __validate_env(self):
+        """
+        Validate the environment variables.
+        """
+        if not OPENAI_API_KEY:
+            return {"error": "OPENAI_API_KEY environment variable not set."}
+        if not PINECONE_API_KEY:
+            return {"error": "PINECONE_API_KEY environment variable not set."}
+        if not PINECONE_ENVIRONMENT_NAME:
+            return {"error": "PINECONE_ENVIRONMENT_NAME environment variable not set."}
+        return {"success": True}
 
     def __validate_payload(self, payload):
         """
@@ -42,6 +57,10 @@ class Embeddings:
         """
         Create Pinecone vectors from Open AI embeddings.
         """
+        validated_env = self.__validate_env()
+        if validated_env.get('error', None):
+            return validated_env
+
         validated_payload = self.__validate_payload(payload)
         if validated_payload.get('error', None):
             return validated_payload
