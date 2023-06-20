@@ -1,6 +1,6 @@
 # AI-Refiner
 
-## Using the Embeddings CLI
+## Using the Embeddings API/CLI
 
 The Embeddings API is a Pinecone wrapper written in Python that allows you to convert and store text as embeddings. Embedding are generated from text using OpenAI and stored as vectors in Pinecone. Embeddings can be used to create visualization tools, model training and tuning tools, text search, Q/A and recommendation APIs.
 
