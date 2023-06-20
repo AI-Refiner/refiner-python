@@ -36,7 +36,7 @@ class PineconeClient(object):
                 async_results = [
                     pinecone_index.upsert(
                         vectors=ids_vectors_chunk, async_req=True)
-                    for ids_vectors_chunk in self.chunks(embeddings, batch_size=batch_size or 100)
+                    for ids_vectors_chunk in self.chunks(embeddings, batch_size=batch_size)
                 ]
                 # Wait for and retrieve responses (this raises in case of error)
                 response = [async_result.get()
