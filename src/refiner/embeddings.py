@@ -56,7 +56,7 @@ class Embeddings:
                 return {"error": "Metadata must be valid JSON."}
         return {"success": True}
 
-    def create(self, payload, index_id, namespace=None):
+    def create(self, payload, index_id, namespace=None, batch_size=None, pool_threads=None):
         """
         Create Pinecone vectors from Open AI embeddings.
         """
@@ -80,7 +80,8 @@ class Embeddings:
         pinecone_client = PineconeClient(
             self.pinecone_api_key, self.pinecone_environment_name)
         response = pinecone_client.store_embeddings(
-            [vector], index_id, dimension=self.openai_ada_200_default_dimension, namespace=namespace)
+            [vector], index_id, dimension=self.openai_ada_200_default_dimension, namespace=namespace,
+            batch_size=batch_size, pool_threads=pool_threads)
 
         return response
 

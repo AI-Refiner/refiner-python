@@ -20,10 +20,12 @@ def cli():
 @click.option('--vector-id', required=False)
 @click.option('--namespace', required=False)
 @click.option('--config-file', required=False)
+@click.option('--batch-size', required=False, type=click.INT)
+@click.option('--pool-threads', required=False, type=click.INT)
 @click.option('--openai-api-key', required=False)
 @click.option('--pinecone-api-key', required=False)
 @click.option('--pinecone-environment-name', required=False)
-def create(text, index_id, metadata, vector_id, namespace, config_file, openai_api_key, pinecone_api_key, pinecone_environment_name):
+def create(text, index_id, metadata, vector_id, namespace, config_file, batch_size, pool_threads, openai_api_key, pinecone_api_key, pinecone_environment_name):
     """
     Create embeddings from text and write to Refiner.
     """
@@ -44,7 +46,7 @@ def create(text, index_id, metadata, vector_id, namespace, config_file, openai_a
         payload['metadata'] = metadata
 
     response = refiner_client.create(
-        payload, index_id, namespace=namespace)
+        payload, index_id, namespace=namespace, batch_size=batch_size, pool_threads=pool_threads)
 
     if response.get('error', None):
         click.echo('Error: {}'.format(response['error']))

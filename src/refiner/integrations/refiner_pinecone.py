@@ -1,6 +1,5 @@
 import pinecone
-
-# write a class that takes in the pinecone api key and environment name and inits the pinecone client
+import itertools
 
 
 class PineconeClient(object):
@@ -9,7 +8,15 @@ class PineconeClient(object):
         # Connect to Pinecone
         pinecone.init(api_key=api_key, environment=environment_name)
 
-    def store_embeddings(self, embeddings, index_name, dimension, namespace=None):
+    def chunks(self, iterable, batch_size=100):
+        """A helper function to break an iterable into chunks of size batch_size."""
+        it = iter(iterable)
+        chunk = tuple(itertools.islice(it, batch_size))
+        while chunk:
+            yield chunk
+            chunk = tuple(itertools.islice(it, batch_size))
+
+    def store_embeddings(self, embeddings, index_name, dimension, namespace=None, batch_size=None, pool_threads=None):
 
         # only create index if it doesn't exist
         if index_name not in pinecone.list_indexes():
@@ -21,6 +28,27 @@ class PineconeClient(object):
 
         # Add embeddings to Pinecone index
         pinecone_index = pinecone.Index(index_name)
+
+        # If pool_threads, use the pool_threads
+        if pool_threads:
+            with pinecone.Index(index_name, pool_threads=pool_threads) as pinecone_index:
+                # Send requests in parallel
+                async_results = [
+                    pinecone_index.upsert(
+                        vectors=ids_vectors_chunk, async_req=True)
+                    for ids_vectors_chunk in self.chunks(embeddings, batch_size=batch_size or 100)
+                ]
+                # Wait for and retrieve responses (this raises in case of error)
+                response = [async_result.get()
+                            for async_result in async_results]
+            return response[0]
+
+        # If batch_size, chunk the embeddings
+        if batch_size:
+            for chunk in self.chunks(embeddings, batch_size=batch_size):
+                response = pinecone_index.upsert(
+                    vectors=chunk, namespace=namespace)
+            return response
 
         # Upsert embeddings and metadata to Pinecone index
         response = pinecone_index.upsert(
