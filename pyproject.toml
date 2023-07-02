@@ -1,10 +1,10 @@
 [project]
 name = "refiner"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Alex Daro", email="gmx2267@gmail.com" },
 ]
-description = "API for creating OpenAI embeddings, storing them in Pinecone, and using them to search for similar text."
+description = "Refiner is a python package that allows you to store text as vectors in Pinecone and then search for similar text. It uses OpenAI to generate embeddings and then uses Pinecone to store and search for similar text."
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
