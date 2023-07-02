@@ -10,9 +10,8 @@ from refiner.integrations import PineconeClient
 
 class Embeddings:
     """
-    Refiner class for creating, searching, updating, and deleting Open AI embeddings.
-    Embeddings are created using OpenAI.
-    Uses Pinecone for storing and searching embeddings.
+    Refiner class for creating, searching, updating, and deleting AI embeddings.
+    Embeddings are created using OpenAI. Uses Pinecone for storing and searching embeddings.
     """
 
     def __init__(self, config_file=None, openai_api_key=None, pinecone_api_key=None, pinecone_environment_name=None):
@@ -87,7 +86,7 @@ class Embeddings:
 
     def search(self, query, index_id, limit, namespace=None):
         """
-        Search for Open AI embeddings from text.
+        Search embeddings from text.
         """
         validated_env = self.__validate_env()
         if validated_env.get('error', None):
@@ -97,24 +96,51 @@ class Embeddings:
             self.pinecone_api_key, self.pinecone_environment_name)
         openai_client = OpenAIClient(self.openai_api_key)
         embeddings = openai_client.create_embeddings(query)
-        results = pinecone_client.search_pinecone(
+        results = pinecone_client.search(
             embeddings, index_id, limit, namespace=namespace)
         return results
 
     def delete(self, id):
         """
-        Delete Open AI embeddings from text.
+        Delete embeddings from text.
         """
         pass
 
     def get(self, id):
         """
-        Get Open AI embeddings from text.
+        Get embeddings from text.
         """
         pass
 
     def update(self, id):
         """
-        Update Open AI embeddings from text.
+        Update embeddings from text.
         """
         pass
+
+    # def upload_file(self, payload, index_id, namespace=None, batch_size=None, pool_threads=None):
+    #     """
+    #     Upload embeddings from file.
+    #     """
+    #     # Read file contents
+    #     # Create embeddings from file contents
+    #     # Store embeddings in Pinecone
+    #     # Return response
+
+    #     # read file in chunks if it's too big:
+    #     with open(file, 'r') as f:
+    #         if chunk_size:
+    #             while True:
+    #                 chunk = f.read(1024)
+    #                 if not chunk:
+    #                     break
+    #                 # create embeddings from chunk:
+    #                 openai_client = OpenAIClient(self.openai_api_key)
+    #                 embeddings = openai_client.create_embeddings(chunk)
+    #                 vector = (str(payload['id']), embeddings, metadata)
+
+    #                 # store embeddings in Pinecone
+
+    #     # read file contents:
+    #     with open(file, 'r') as f:
+    #         contents = f.read()

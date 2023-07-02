@@ -1,28 +1,40 @@
 # AI-Refiner
 
-## Using the Embeddings API/CLI
-
-The Embeddings API is a Pinecone wrapper written in Python that allows you to convert and store text as embeddings. Embedding are generated from text using OpenAI and stored as vectors in Pinecone. Embeddings can be used to create visualization tools, model training and tuning tools, text search, Q/A and recommendation APIs.
+The [Refiner](https://pypi.org/project/refiner/) python package can be used to convert and store text and metadata as vector embeddings. Embeddings are generated using [OpenAI](https://openai.com/) and stored as vectors in [Pinecone](https://www.pinecone.io/). Stored embeddings can then be "queried" using the `search` method. Matched embeddings contain contextually relavant metadata that can be used for AI chatbots, semnatic search APIs, and can also be used for training and tuning large language models.
 
 ## Installation
 
-To use the Embeddings CLI, you'll need to clone the repository and install the necessary dependencies.
+```shell
+pip install refiner
+```
 
-`git clone https://github.com/adaro/AI-Refiner.git`
+## OpenAI and Pinecone API Keys.
 
-Create a `.env` file either in the root folder or anywhere your python environment has access to when using the `--config-file` option. Add your OpenAI API Key, Pinecone API Key and Pinecone environment name, or pass these in as CLI options or module kwargs.
+You'll need API keys for OpenAI and Pinecone.
 
-`PINECONE_API_KEY="API_KEY"`
+Once you have your API keys, you can either set local ENV variables in a shell:
 
-`PINECONE_ENVIRONMENT_NAME="ENV_NAME"`
+```shell
+export PINECONE_API_KEY="API_KEY"
+export PINECONE_ENVIRONMENT_NAME="ENV_NAME"
+export OPENAI_API_KEY="API_KEY"
+```
 
-`OPENAI_API_KEY="API_KEY"`
+or you can create a `.env` (dotenv) config file and pass in the file path when initializing the Embeddings class:
 
-From the root folder install the required dependencies:
-`pip install .`
+```python
+from refiner.embeddings import Embeddings
+embeddings_client = Embeddings(config_file="/path/to/.env")
+```
 
-## Help
+Your .env file should follow key/value format:
 
-To see the available sub-commands run the help option.
+```shell
+PINECONE_API_KEY="API_KEY"
+PINECONE_ENVIRONMENT_NAME="ENV_NAME"
+OPENAI_API_KEY="API_KEY"
+```
 
-`refiner  --help`
+## API Docs
+
+Comming soon.

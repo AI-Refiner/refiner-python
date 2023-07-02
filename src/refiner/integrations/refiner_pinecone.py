@@ -55,7 +55,7 @@ class PineconeClient(object):
             vectors=embeddings, namespace=namespace)
         return response
 
-    def search_pinecone(self, embeddings, index_name, limit, namespace=None):
+    def search(self, embeddings, index_name, limit, namespace=None):
 
         # Connect to the Pinecone index
         index = pinecone.Index(index_name)

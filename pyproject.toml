@@ -1,6 +1,6 @@
 [project]
 name = "refiner"
-version = "0.1.0"
+version = "0.0.1"
 authors = [
   { name="Alex Daro", email="gmx2267@gmail.com" },
 ]
@@ -23,9 +23,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-
-[project.scripts]
-refiner = "bin.cli:cli"
 
 [project.urls]
 "Homepage" = "https://github.com/adaro/ai-refiner"
