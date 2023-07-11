@@ -34,6 +34,18 @@ PINECONE_ENVIRONMENT_NAME="ENV_NAME"
 OPENAI_API_KEY="API_KEY"
 ```
 
-## API Docs
+## CLI
 
-Comming soon.
+You can install the [CLI](https://pypi.org/project/refiner-cli/) to `create` and `search` your vectors.
+
+```shell
+pip install refiner-cli
+```
+
+The --help option can be used to learn about the create and search commands.
+
+```shell
+refiner --help
+refiner create --help
+refiner search --help
+```
