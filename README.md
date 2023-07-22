@@ -1,6 +1,7 @@
 # AI-Refiner
 
 The [Refiner](https://pypi.org/project/refiner/) Python package can be used to convert and store text and metadata as vector embeddings. Embeddings are generated using [OpenAI](https://openai.com/) and stored as vectors in [Pinecone](https://www.pinecone.io/). Stored embeddings can then be "queried" using the `search` method. Matched embeddings contain contextually relevant metadata that can be used for AI chatbots, and semantic search APIs, etc.
+
 ## Installation
 
 ```shell
@@ -32,6 +33,29 @@ Your .env file should follow key/value format:
 PINECONE_API_KEY="API_KEY"
 PINECONE_ENVIRONMENT_NAME="ENV_NAME"
 OPENAI_API_KEY="API_KEY"
+```
+
+## Create Embeddings
+
+```python
+from refiner.embeddings import Embeddings
+embeddings_client = Embeddings(config_file="/path/to/.env")
+payload = {
+    "id": "index-id,
+    "text": "Example text to embed",
+    "metadata": {"key": "value"}
+}
+embeddings_client.create(payload, "example-index")
+# {'upserted_count': 1}
+```
+
+## Semantic Search
+
+```python
+embeddings_client = Embeddings(config_file="/path/to/.env")
+limit = 10
+embeddings_client.search('search text', 'index-id', limit)
+# {'matches': [...]}
 ```
 
 ## CLI

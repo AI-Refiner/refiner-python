@@ -47,7 +47,7 @@ class Embeddings:
         """
         if not payload['text']:
             return {"error": "Must include text."}
-        if payload.get('metadata', None):
+        if payload.get('metadata', None) and isinstance(payload['metadata'], str):
             try:
                 json.loads(payload['metadata'])
             except (json.decoder.JSONDecodeError, ValueError) as e:
@@ -70,7 +70,7 @@ class Embeddings:
         embeddings = openai_client.create_embeddings(payload['text'])
 
         metadata = payload.get('metadata', None)
-        if metadata:
+        if metadata and isinstance(metadata, str):
             metadata = json.loads(metadata)
 
         vector = (str(payload['id']), embeddings, metadata)
