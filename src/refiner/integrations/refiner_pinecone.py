@@ -1,13 +1,26 @@
+import os
 import pinecone
 import itertools
+from pathlib import Path
+from dotenv import load_dotenv
 
 
 class PineconeClient(object):
 
-    def __init__(self, api_key, environment_name):
+    def __init__(self, api_key=None, environment_name=None, config_file=None):
+
+        self.config_file = config_file
+        _dotenv_path = Path(self.config_file or '.env')
+        if _dotenv_path.exists():
+            load_dotenv(dotenv_path=_dotenv_path)
+
+        self.__api_key = api_key or os.getenv("PINECONE_API_KEY")
+        self.environment_name = environment_name or os.getenv(
+            "PINECONE_ENVIRONMENT_NAME")
+
         # Init Pinecone
         pinecone.init(
-            api_key=api_key, environment=environment_name)
+            api_key=self.__api_key, environment=self.environment_name)
 
         # Set pinecone on class. Consumers of this class can use it to call pinecone API directly.
         self.pinecone = pinecone

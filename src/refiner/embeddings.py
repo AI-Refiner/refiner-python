@@ -18,13 +18,12 @@ class Embeddings:
         """
         Initialize the Refiner class.
         """
-        self.config_file = config_file
-        _dotenv_path = Path(self.config_file or '.env')
+        _dotenv_path = Path(config_file or '.env')
         if _dotenv_path.exists():
             load_dotenv(dotenv_path=_dotenv_path)
 
-        self.openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
-        self.pinecone_api_key = pinecone_api_key or os.getenv(
+        self.__openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
+        self.__pinecone_api_key = pinecone_api_key or os.getenv(
             "PINECONE_API_KEY")
         self.pinecone_environment_name = pinecone_environment_name or os.getenv(
             "PINECONE_ENVIRONMENT_NAME")
@@ -34,9 +33,9 @@ class Embeddings:
         """
         Validate the environment variables.
         """
-        if not self.openai_api_key:
+        if not self.__openai_api_key:
             return {"error": "OPENAI_API_KEY environment variable not set in .env file or passed in as an argument."}
-        if not self.pinecone_api_key:
+        if not self.__pinecone_api_key:
             return {"error": "PINECONE_API_KEY environment variable not set in .env file or passed in as an argument."}
         if not self.pinecone_environment_name:
             return {"error": "PINECONE_ENVIRONMENT_NAME environment variable not set in .env file or passed in as an argument."}
@@ -67,7 +66,7 @@ class Embeddings:
         if validated_payload.get('error', None):
             return validated_payload
 
-        openai_client = OpenAIClient(self.openai_api_key)
+        openai_client = OpenAIClient(self.__openai_api_key)
         embeddings = openai_client.create_embeddings(payload['text'])
 
         metadata = payload.get('metadata', None)
@@ -77,7 +76,7 @@ class Embeddings:
         vector = (str(payload['id']), embeddings, metadata)
 
         pinecone_client = PineconeClient(
-            self.pinecone_api_key, self.pinecone_environment_name)
+            self.__pinecone_api_key, self.pinecone_environment_name)
         response = pinecone_client.store_embeddings(
             [vector], index_id, dimension=self.openai_ada_200_default_dimension, namespace=namespace,
             batch_size=batch_size, pool_threads=pool_threads)
@@ -93,8 +92,8 @@ class Embeddings:
             return validated_env
 
         pinecone_client = PineconeClient(
-            self.pinecone_api_key, self.pinecone_environment_name)
-        openai_client = OpenAIClient(self.openai_api_key)
+            self.__pinecone_api_key, self.pinecone_environment_name)
+        openai_client = OpenAIClient(self.__openai_api_key)
         embeddings = openai_client.create_embeddings(query)
         results = pinecone_client.search(
             embeddings, index_id, limit, namespace=namespace)
