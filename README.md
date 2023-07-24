@@ -1,4 +1,4 @@
-# AI-Refiner
+# refiner-python
 
 The [Refiner](https://pypi.org/project/refiner/) Python package can be used to convert and store text and metadata as vector embeddings. Embeddings are generated using [OpenAI](https://openai.com/) and stored as vectors in [Pinecone](https://www.pinecone.io/). Stored embeddings can then be "queried" using the `search` method. Matched embeddings contain contextually relevant metadata that can be used for AI chatbots, and semantic search APIs, etc.
 
