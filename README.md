@@ -41,7 +41,7 @@ OPENAI_API_KEY="API_KEY"
 from refiner.embeddings import Embeddings
 embeddings_client = Embeddings(config_file="/path/to/.env")
 payload = {
-    "id": "index-id,
+    "id": "index-id",
     "text": "Example text to embed",
     "metadata": {"key": "value"}
 }
