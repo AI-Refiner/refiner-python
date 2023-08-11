@@ -1,6 +1,6 @@
 [project]
 name = "refiner"
-version = "0.0.6"
+version = "0.0.7"
 authors = [
   { name="Alex Daro", email="gmx2267@gmail.com" },
 ]
@@ -16,7 +16,9 @@ dependencies = [
   "plotly",
   "python-dotenv",
   "scipy",
-  "scikit-learn"
+  "scikit-learn",
+  "langchain",
+  "bs4"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

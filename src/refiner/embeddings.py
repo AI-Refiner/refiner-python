@@ -45,13 +45,10 @@ class Embeddings:
         """
         Validate the payload for the create method.
         """
-        if not payload['text']:
-            return {"error": "Must include text."}
-        if payload.get('metadata', None) and isinstance(payload['metadata'], str):
-            try:
-                json.loads(payload['metadata'])
-            except (json.decoder.JSONDecodeError, ValueError) as e:
-                return {"error": "Metadata must be valid JSON."}
+        # validate payload is a list
+        if not isinstance(payload, list):
+            return {"error": "Payload must be a list."}
+
         return {"success": True}
 
     def create(self, payload, index_id, namespace=None, batch_size=None, pool_threads=None):
@@ -66,19 +63,10 @@ class Embeddings:
         if validated_payload.get('error', None):
             return validated_payload
 
-        openai_client = OpenAIClient(self.__openai_api_key)
-        embeddings = openai_client.create_embeddings(payload['text'])
-
-        metadata = payload.get('metadata', None)
-        if metadata and isinstance(metadata, str):
-            metadata = json.loads(metadata)
-
-        vector = (str(payload['id']), embeddings, metadata)
-
         pinecone_client = PineconeClient(
             self.__pinecone_api_key, self.pinecone_environment_name)
         response = pinecone_client.store_embeddings(
-            [vector], index_id, dimension=self.openai_ada_200_default_dimension, namespace=namespace,
+            payload, index_id, dimension=self.openai_ada_200_default_dimension, namespace=namespace,
             batch_size=batch_size, pool_threads=pool_threads)
 
         return response

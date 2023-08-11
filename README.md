@@ -40,11 +40,11 @@ OPENAI_API_KEY="API_KEY"
 ```python
 from refiner.embeddings import Embeddings
 embeddings_client = Embeddings(config_file="/path/to/.env")
-payload = {
-    "id": "index-id",
-    "text": "Example text to embed",
-    "metadata": {"key": "value"}
-}
+payload = [(
+    "index-id", # an id for your embedding
+    "Example text to embed", # some text to embed
+    {"key": "value"} # add any metadata you want here
+)]
 embeddings_client.create(payload, "example-index")
 # {'upserted_count': 1}
 ```
@@ -56,6 +56,69 @@ embeddings_client = Embeddings(config_file="/path/to/.env")
 limit = 10
 embeddings_client.search('search text', 'index-id', limit)
 # {'matches': [...]}
+```
+
+## Loaders
+
+```python
+from loaders import Loaders
+url = "https://news.yahoo.com/"
+loaders = Loaders()
+data = loaders.get_document_from_url(url)
+# [
+#  Document {
+#    pageContent:
+```
+
+# Transformers
+
+```python
+from e import Embeddings
+from transformers import Transformers
+embeddings_client = Embeddings(config_file="/path/to/.env")
+transformers = Transformers()
+data = transformers.split_text(data, chunk_size=500, chunk_overlap=0)
+vectors = []
+for i, index in data:
+    embeddings = openai_client.create_embeddings(i[1])
+    vector = (
+        str(index),
+        embeddings,
+        {"page_content": i[1], "source": url},
+    )
+    vectors.append(vector)
+created = embeddings_client.create(vectors, "test-index");
+# { upsertedCount: 251 }
+```
+
+## Document Chatbot Example
+
+```python
+question = "what are the top news stories today?"
+results = e.search(question, "test-index", 10)
+document = ''
+for result in results["matches"]:
+    document += result['metadata']['page_content']
+
+prompt = '''
+  Q: {}\n
+  Using this document answer the question as a friendly chatbot that knows about the details in the document.
+  You can answer questions only with the information in the documents you've been trained on.
+  {}\n
+  A:
+  '''.format(question, document)
+
+payload = {
+    "model": "text-davinci-003",
+    "prompt": prompt,
+    "max_tokens": 50,
+    "temperature": 0,
+    "stream": True
+}
+
+response = openai_client.create_completion(payload)
+for resp in response:
+    print(resp.choices[0].text)
 ```
 
 ## CLI

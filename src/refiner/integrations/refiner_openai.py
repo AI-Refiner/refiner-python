@@ -16,3 +16,7 @@ class OpenAIClient:
         )
         embeddings = response['data'][0]['embedding']
         return embeddings
+
+    def create_completion(self, payload):
+        completion = self.openai.Completion.create(**payload)
+        return completion

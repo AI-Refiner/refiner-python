@@ -43,6 +43,7 @@ class PineconeClient(object):
                 dimension=dimension
             )
             print('Pinecone index created: {}'.format(index_name))
+            return
 
         # Add embeddings to Pinecone index
         pinecone_index = self.pinecone.Index(index_name)
